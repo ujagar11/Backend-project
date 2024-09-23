@@ -9,6 +9,7 @@ import com.BackendProject.Shopeeee.response.ApiResponse;
 import com.BackendProject.Shopeeee.service.cart.ICartItemService;
 import com.BackendProject.Shopeeee.service.cart.ICartService;
 import com.BackendProject.Shopeeee.service.user.IUserService;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class CartItemController {
 
         try{
 
-            User user = userService.getUserById(1L);
+            User user = userService.getAuthenticatedUser();
             Cart cart = cartService.initializeNewCart(user);
 
             cartItemService.addItemToCart(cart.getId(), productId, quantity);
@@ -37,6 +38,9 @@ public class CartItemController {
         }catch (ResourceNotFoundException e){
 
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+        }catch (JwtException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage() , null));
+
         }
     }
 

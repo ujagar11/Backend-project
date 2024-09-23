@@ -1,28 +1,37 @@
 package com.BackendProject.Shopeeee.data;
 
+import com.BackendProject.Shopeeee.model.Role;
 import com.BackendProject.Shopeeee.model.User;
 import com.BackendProject.Shopeeee.repository.UserRepository;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements ApplicationListener<ApplicationReadyEvent> {
 
+    private final RoleRepository roleRepository;
     private final UserRepository userRepository;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void onApplicationEvent(ApplicationReadyEvent event) {
+    public void onApplicationEvent( ApplicationReadyEvent event) {
+        Set<String> defaultRoles = Set.of("ROLE_ADMIN","ROLE_USER");
         createDefaultUserIfNotExist();
+        createDefaultRoleIfNotExist(defaultRoles);
+        createDefaultAdminIfNotExist();
     }
 
     private void createDefaultUserIfNotExist(){
-
+        Role userRole = roleRepository.findByName("ROLE_USER").get();
         for (int i =1;i<= 5; i++){
-            String defaultEmail = "user"+i+"@eamail.com";
+            String defaultEmail = "user"+i+"@email.com";
             if (userRepository.existsByEmail(defaultEmail)){
                 continue;
             }
@@ -30,9 +39,36 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
             user.setFirstName("The User");
             user.setLastName("User"+i);
             user.setEmail(defaultEmail);
-            user.setPassword("123456");
+            user.setPassword(passwordEncoder.encode("1233456"));
+            user.setRoles(Set.of(userRole));
             userRepository.save(user);
             System.out.println("Default vet User"+i+"created successfully.");
+        }
+    }
+
+
+
+    private void  createDefaultRoleIfNotExist(Set<String> roles){
+        roles.stream()
+                .filter(role -> roleRepository.findByName(role).isEmpty())
+                .map(Role::new).forEach(roleRepository::save);
+    }
+
+    private void createDefaultAdminIfNotExist(){
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN").get();
+        for (int i =1;i<= 2; i++){
+            String defaultEmail = "admin"+i+"@email.com";
+            if (userRepository.existsByEmail(defaultEmail)){
+                continue;
+            }
+            User user = new User();
+            user.setFirstName("Admin");
+            user.setLastName("Admin"+i);
+            user.setEmail(defaultEmail);
+            user.setPassword(passwordEncoder.encode("1233456"));
+           user.setRoles(Set.of(adminRole));
+            userRepository.save(user);
+            System.out.println("Default vet admin user"+i+"created successfully.");
         }
     }
 }
