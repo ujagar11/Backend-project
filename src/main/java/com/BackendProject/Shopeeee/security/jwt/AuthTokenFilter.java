@@ -1,6 +1,5 @@
 package com.BackendProject.Shopeeee.security.jwt;
 
-import com.BackendProject.Shopeeee.security.user.ShopUserDetails;
 import com.BackendProject.Shopeeee.security.user.ShopUserDetailsService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -9,22 +8,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.SpringServletContainerInitializer;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
-    private JwtUtils jwtUtils;
-    private ShopUserDetailsService userDetailsService;
+
+    private    JwtUtils jwtUtils;
+    private   ShopUserDetailsService userDetailsService;
+
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,

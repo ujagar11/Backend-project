@@ -3,6 +3,7 @@ package com.BackendProject.Shopeeee.data;
 import com.BackendProject.Shopeeee.model.Role;
 import com.BackendProject.Shopeeee.model.User;
 import com.BackendProject.Shopeeee.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+
+@Transactional
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements ApplicationListener<ApplicationReadyEvent> {
